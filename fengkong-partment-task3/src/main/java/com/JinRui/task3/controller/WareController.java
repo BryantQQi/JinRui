@@ -36,6 +36,8 @@ public class WareController {
         Ware ware = wareService.getOne(wraper);
         //redisTemplate.opsForValue().increment(api:count::ware.getId());
         return ware;
+        //test
+
     }
 
 }
