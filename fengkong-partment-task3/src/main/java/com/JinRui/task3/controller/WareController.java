@@ -4,6 +4,7 @@ import com.JinRui.task3.entity.Ware;
 import com.JinRui.task3.service.WareService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/region/ware")
+@Slf4j
 public class WareController {
 
     private final RedisTemplate redisTemplate;
@@ -35,6 +37,11 @@ public class WareController {
         wraper.eq(Ware::getName,name);
         Ware ware = wareService.getOne(wraper);
         //redisTemplate.opsForValue().increment(api:count::ware.getId());
+        log.info("lllll");
+
+
+
+
         return ware;
         //test
         //test2
