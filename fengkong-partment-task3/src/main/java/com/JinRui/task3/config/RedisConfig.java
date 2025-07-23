@@ -35,7 +35,7 @@ public class RedisConfig {
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
         redisTemplate.setHashValueSerializer(new StringRedisSerializer());
 
-        // 4.返回该redis模板对象，加入到spring容器中
+        // 4.返回该redis模板对象，加入到spring容器中.
         return redisTemplate;
     }
 }
