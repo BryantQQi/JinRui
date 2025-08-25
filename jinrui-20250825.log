@@ -1,0 +1,7 @@
+22:26:17.614 [traceId=1234567890] [http-nio-8304-exec-1] INFO  c.J.f.s.impl.CreditReportServiceImpl - 自定义 征信报文生成成功，报文编号：CR1756131977598
+22:26:17.614 [traceId=1234567890] [http-nio-8304-exec-1] INFO  c.J.f.c.CreditReportController - 自定义征信报 文生成成功，报文编号：CR1756131977598
+22:26:17.614 [traceId=1234567890] [http-nio-8304-exec-1] INFO  c.J.f.c.CreditReportController - 自定义征信报 文生成成功，报文编号：CR1756131977598
+
+22:26:17.614 [traceId=1234567891] [http-nio-8304-exec-1] INFO  c.J.f.s.impl.CreditReportServiceImpl - 自定义 征信报文生成成功，报文编号：CR1756131977598
+22:26:17.614 [traceId=1234567891] [http-nio-8304-exec-1] INFO  c.J.f.c.CreditReportController - 自定义征信报 文生成成功，报文编号：CR1756131977598
+22:26:17.614 [traceId=1234567891] [http-nio-8304-exec-1] INFO  c.J.f.c.CreditReportController - 自定义征信报 文生成成功，报文编号：CR1756131977598

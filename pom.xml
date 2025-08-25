@@ -13,6 +13,7 @@
         <module>fengkong-partment-target2</module>
         <module>fengkong-partment-task3</module>
         <module>common</module>
+        <module>fengkong4</module>
     </modules>
 
     <parent>
