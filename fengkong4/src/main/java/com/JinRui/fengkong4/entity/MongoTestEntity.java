@@ -32,6 +32,11 @@ public class MongoTestEntity {
     private String data;
 
     /**
+     * 测试数据内容2
+     */
+    private String data2;
+
+    /**
      * 创建时间
      */
     private Date createTime;
