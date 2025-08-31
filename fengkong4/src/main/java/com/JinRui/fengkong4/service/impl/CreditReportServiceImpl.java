@@ -59,6 +59,13 @@ public class CreditReportServiceImpl implements CreditReportService {
             report.setPublicInfos(dataGenerator.generatePublicInfos(1));
             report.setQueryRecords(dataGenerator.generateQueryRecords(queryRecords));
             
+            // 生成风控增强信息
+            report.setFraudWarnings(dataGenerator.generateFraudWarnings());
+            report.setEmploymentHistory(dataGenerator.generateEmploymentHistory());
+            report.setResidenceHistory(dataGenerator.generateResidenceHistory());
+            report.setCreditSummary(dataGenerator.generateCreditSummary());
+            report.setCreditLimits(dataGenerator.generateCreditLimits());
+            
             log.info("自定义征信报文生成成功，报文编号：{}", report.getHeader().getReportNumber());
             return report;
         } catch (Exception e) {

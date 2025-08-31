@@ -46,4 +46,22 @@ public class ReportHeader {
      */
     @JacksonXmlProperty(localName = "ReportType")
     private String reportType;
+
+    /**
+     * 报告查询时间（ISO8601标准格式，精确到秒）
+     */
+    @JacksonXmlProperty(localName = "ReportQueryTime")
+    private String reportQueryTime;
+
+    /**
+     * 是否查询到有效征信记录（true:有信贷历史，false:可能为白户）
+     */
+    @JacksonXmlProperty(localName = "HasValidCreditInfo")
+    private Boolean hasValidCreditInfo;
+
+    /**
+     * 首次贷款/贷记卡距今月份数（反映信用历史长度，≥60月为优质客户）
+     */
+    @JacksonXmlProperty(localName = "FirstCreditMonthDiff")
+    private Integer firstCreditMonthDiff;
 }

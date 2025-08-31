@@ -152,4 +152,35 @@ public class CreditReportController {
         response.put("description", "二代征信报文生成服务");
         return ApiResult.ok(response);
     }
+
+    /**
+     * 生成增强版征信报文（包含所有风控信息）
+     */
+    @GetMapping(value = "/generate/enhanced", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ApiResult<CreditReport> generateEnhancedReport(
+            @RequestParam(defaultValue = "5") int creditRecords,
+            @RequestParam(defaultValue = "8") int queryRecords) {
+        
+        log.info("接收到生成增强版征信报文请求，信贷记录数：{}，查询记录数：{}", creditRecords, queryRecords);
+        
+        try {
+            // 参数验证
+            if (creditRecords < 0 || creditRecords > 20) {
+                return ApiResult.fail(400, "信贷记录数必须在0-20之间");
+            }
+            
+            if (queryRecords < 0 || queryRecords > 50) {
+                return ApiResult.fail(400, "查询记录数必须在0-50之间");
+            }
+            
+            CreditReport report = creditReportService.generateCustomReport(creditRecords, queryRecords);
+
+            log.info("增强版征信报文生成成功，报文编号：{}", report.getHeader().getReportNumber());
+            return ApiResult.ok(report);
+            
+        } catch (Exception e) {
+            log.error("生成增强版征信报文失败", e);
+            return ApiResult.fail(500, "征信报文生成失败：" + e.getMessage());
+        }
+    }
 }

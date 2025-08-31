@@ -67,4 +67,34 @@ public class CreditReport {
      */
     @JacksonXmlProperty(localName = "StatementInfo")
     private StatementInfo statementInfo;
+
+    /**
+     * 防欺诈提示
+     */
+    @JacksonXmlProperty(localName = "FraudWarnings")
+    private FraudWarnings fraudWarnings;
+
+    /**
+     * 职业历史
+     */
+    @JacksonXmlProperty(localName = "EmploymentHistory")
+    private List<EmploymentHistory> employmentHistory;
+
+    /**
+     * 居住历史
+     */
+    @JacksonXmlProperty(localName = "ResidenceHistory")
+    private List<ResidenceHistory> residenceHistory;
+
+    /**
+     * 信用概要增强
+     */
+    @JacksonXmlProperty(localName = "CreditSummary")
+    private CreditSummary creditSummary;
+
+    /**
+     * 授信额度
+     */
+    @JacksonXmlProperty(localName = "CreditLimits")
+    private CreditLimits creditLimits;
 }

@@ -9,6 +9,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * 征信数据随机生成器
@@ -38,6 +40,13 @@ public class CreditDataGenerator {
         report.setQueryRecords(generateQueryRecords(8));
         report.setStatementInfo(generateStatementInfo());
         
+        // 新增风控字段
+        report.setFraudWarnings(generateFraudWarnings());
+        report.setEmploymentHistory(generateEmploymentHistory());
+        report.setResidenceHistory(generateResidenceHistory());
+        report.setCreditSummary(generateCreditSummary());
+        report.setCreditLimits(generateCreditLimits());
+        
         return report;
     }
 
@@ -52,6 +61,12 @@ public class CreditDataGenerator {
         header.setInstitutionCode("FENGKONG001");
         header.setQueryReason("贷款审批");
         header.setReportType("1");
+        
+        // 新增风控字段
+        header.setReportQueryTime(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX")));
+        header.setHasValidCreditInfo(random.nextDouble() > 0.1); // 90%概率有有效征信记录
+        header.setFirstCreditMonthDiff(random.nextInt(120) + 12); // 12-132个月
+        
         return header;
     }
 
@@ -80,6 +95,15 @@ public class CreditDataGenerator {
         info.setOccupation(faker.job().title());
         info.setPosition(faker.job().position());
         info.setAnnualIncome(String.valueOf((random.nextInt(50) + 10) * 10000)); // 10-60万
+        
+        // 新增风控字段
+        info.setContactInfo(generateContactInfo());
+        info.setOtherCertificates(generateOtherCertificates());
+        
+        // 已婚时生成配偶信息
+        if ("2".equals(info.getMaritalStatus())) {
+            info.setSpouseInfo(generateSpouseInfo());
+        }
         
         return info;
     }
@@ -338,5 +362,245 @@ public class CreditDataGenerator {
         }
         
         return sb.toString();
+    }
+
+    /**
+     * 生成联系信息
+     */
+    public ContactInfo generateContactInfo() {
+        ContactInfo contactInfo = new ContactInfo();
+        
+        // 生成最近5个手机号
+        List<String> recentMobiles = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            String mobile = generateMobile();
+            int year = 2023 + random.nextInt(3);
+            int month = random.nextInt(12) + 1;
+            recentMobiles.add(mobile.substring(0, 3) + "****" + mobile.substring(7) + "(" + year + "-" + String.format("%02d", month) + ")");
+        }
+        contactInfo.setRecentMobiles(recentMobiles);
+        
+        contactInfo.setEmail(faker.internet().emailAddress());
+        contactInfo.setMailingAddress(faker.address().fullAddress());
+        contactInfo.setHouseholdAddress(faker.address().fullAddress());
+        
+        return contactInfo;
+    }
+
+    /**
+     * 生成配偶信息
+     */
+    public SpouseInfo generateSpouseInfo() {
+        SpouseInfo spouseInfo = new SpouseInfo();
+        
+        spouseInfo.setName(faker.name().fullName());
+        spouseInfo.setCertType("1"); // 身份证
+        spouseInfo.setCertNumber(generateIdNumber().substring(0, 14) + "XXXX");
+        spouseInfo.setEmployer(faker.company().name());
+        spouseInfo.setContact(generateMobile().substring(0, 3) + "****" + generateMobile().substring(7));
+        
+        return spouseInfo;
+    }
+
+    /**
+     * 生成其他证件列表
+     */
+    public List<OtherCertificate> generateOtherCertificates() {
+        List<OtherCertificate> certificates = new ArrayList<>();
+        
+        // 20%概率有护照
+        if (random.nextDouble() < 0.2) {
+            OtherCertificate passport = new OtherCertificate();
+            passport.setCertType("2");
+            passport.setCertNumber("E" + String.format("%08d", random.nextInt(100000000)));
+            certificates.add(passport);
+        }
+        
+        // 10%概率有港澳通行证
+        if (random.nextDouble() < 0.1) {
+            OtherCertificate hkMacao = new OtherCertificate();
+            hkMacao.setCertType("5");
+            hkMacao.setCertNumber("H" + String.format("%08d", random.nextInt(100000000)));
+            certificates.add(hkMacao);
+        }
+        
+        return certificates;
+    }
+
+    /**
+     * 生成防欺诈提示
+     */
+    public FraudWarnings generateFraudWarnings() {
+        FraudWarnings fraudWarnings = new FraudWarnings();
+        
+        // 5%概率有防欺诈标记
+        fraudWarnings.setHasFraudAlert(random.nextDouble() < 0.05);
+        
+        if (fraudWarnings.getHasFraudAlert()) {
+            fraudWarnings.setAlertStartDate(generatePastDate(365));
+            fraudWarnings.setAlertEndDate(generateFutureDate(365));
+        }
+        
+        // 10%概率有异议标注
+        fraudWarnings.setHasDispute(random.nextDouble() < 0.1);
+        
+        return fraudWarnings;
+    }
+
+    /**
+     * 生成职业历史
+     */
+    public List<EmploymentHistory> generateEmploymentHistory() {
+        List<EmploymentHistory> history = new ArrayList<>();
+        
+        // 生成1-3个工作经历
+        int count = random.nextInt(3) + 1;
+        for (int i = 0; i < count; i++) {
+            EmploymentHistory employment = new EmploymentHistory();
+            
+            employment.setEmployer(faker.company().name());
+            employment.setStartYear(String.valueOf(2020 - i * 2));
+            employment.setCompanyType(String.valueOf(20 + random.nextInt(3) * 10 + 1)); // 21, 31, 41
+            employment.setCompanyPhone(generatePhone());
+            employment.setPosition(faker.job().position());
+            employment.setIndustry(faker.job().field());
+            
+            history.add(employment);
+        }
+        
+        return history;
+    }
+
+    /**
+     * 生成居住历史
+     */
+    public List<ResidenceHistory> generateResidenceHistory() {
+        List<ResidenceHistory> history = new ArrayList<>();
+        
+        // 生成1-3个居住地址
+        int count = random.nextInt(3) + 1;
+        for (int i = 0; i < count; i++) {
+            ResidenceHistory residence = new ResidenceHistory();
+            
+            residence.setAddress(faker.address().fullAddress());
+            residence.setResidencePhone(generatePhone());
+            
+            int year = 2023 - i * 2;
+            int month = random.nextInt(12) + 1;
+            residence.setUpdateDate(year + "-" + String.format("%02d", month));
+            
+            history.add(residence);
+        }
+        
+        return history;
+    }
+
+    /**
+     * 生成信用概要增强
+     */
+    public CreditSummary generateCreditSummary() {
+        CreditSummary creditSummary = new CreditSummary();
+        
+        // 特殊记录
+        CreditSummary.SpecialRecords specialRecords = new CreditSummary.SpecialRecords();
+        specialRecords.setHasBadDebt(random.nextDouble() < 0.02); // 2%概率有呆账
+        specialRecords.setHasAssetDisposal(random.nextDouble() < 0.01); // 1%概率有资产处置
+        specialRecords.setHasGuarantorRepayment(random.nextDouble() < 0.03); // 3%概率有保证人代偿
+        creditSummary.setSpecialRecords(specialRecords);
+        
+        // 贷款逾期统计
+        CreditSummary.OverdueStats loanOverdue = new CreditSummary.OverdueStats();
+        loanOverdue.setCount(random.nextInt(3));
+        loanOverdue.setMonths(random.nextInt(10));
+        loanOverdue.setMaxAmount(Long.valueOf(random.nextInt(10000) + 1000));
+        loanOverdue.setMaxDuration(random.nextInt(3) + 1);
+        creditSummary.setLoanOverdue(loanOverdue);
+        
+        // 贷记卡逾期统计
+        CreditSummary.OverdueStats creditCardOverdue = new CreditSummary.OverdueStats();
+        creditCardOverdue.setCount(random.nextInt(2));
+        creditCardOverdue.setMonths(random.nextInt(6));
+        creditCardOverdue.setMaxAmount(Long.valueOf(random.nextInt(5000) + 500));
+        creditCardOverdue.setMaxDuration(random.nextInt(2) + 1);
+        creditSummary.setCreditCardOverdue(creditCardOverdue);
+        
+        // 异常状态标记
+        CreditSummary.AbnormalFlags abnormalFlags = new CreditSummary.AbnormalFlags();
+        abnormalFlags.setHasCreditCardAbnormal(random.nextDouble() < 0.05);
+        abnormalFlags.setHasAbnormalLoanClass(random.nextDouble() < 0.03);
+        creditSummary.setAbnormalFlags(abnormalFlags);
+        
+        return creditSummary;
+    }
+
+    /**
+     * 生成授信额度
+     */
+    public CreditLimits generateCreditLimits() {
+        CreditLimits creditLimits = new CreditLimits();
+        
+        // 最大授信额度
+        CreditLimits.LimitInfo maxLimits = new CreditLimits.LimitInfo();
+        maxLimits.setNonRevolving(Long.valueOf(random.nextInt(500000) + 100000));
+        maxLimits.setCreditCard(Long.valueOf(random.nextInt(100000) + 20000));
+        maxLimits.setRevolving(Long.valueOf(random.nextInt(300000) + 50000));
+        maxLimits.setRevolvingSub(Long.valueOf(random.nextInt(200000) + 50000));
+        maxLimits.setOverallMax(maxLimits.getNonRevolving());
+        maxLimits.setConsumerFinance(Long.valueOf(random.nextInt(50000) + 30000));
+        creditLimits.setMaxLimits(maxLimits);
+        
+        // 最小授信额度
+        CreditLimits.LimitInfo minLimits = new CreditLimits.LimitInfo();
+        minLimits.setCreditCard(Long.valueOf(random.nextInt(20000) + 20000));
+        minLimits.setRevolving(Long.valueOf(random.nextInt(50000) + 50000));
+        minLimits.setNonRevolving(Long.valueOf(random.nextInt(100000) + 100000));
+        minLimits.setRevolvingSub(Long.valueOf(random.nextInt(50000) + 50000));
+        minLimits.setConsumerFinance(Long.valueOf(random.nextInt(20000) + 30000));
+        creditLimits.setMinLimits(minLimits);
+        
+        // 次高授信额度
+        CreditLimits.LimitInfo secondMaxLimits = new CreditLimits.LimitInfo();
+        secondMaxLimits.setCreditCard(Long.valueOf(random.nextInt(80000) + 20000));
+        secondMaxLimits.setRevolving(Long.valueOf(random.nextInt(250000) + 50000));
+        secondMaxLimits.setNonRevolving(Long.valueOf(random.nextInt(300000) + 100000));
+        secondMaxLimits.setRevolvingSub(Long.valueOf(random.nextInt(150000) + 50000));
+        creditLimits.setSecondMaxLimits(secondMaxLimits);
+        
+        // 时间窗口统计
+        CreditLimits.TimeWindowStats timeWindowStats = new CreditLimits.TimeWindowStats();
+        
+        // 近3个月
+        CreditLimits.TimeWindowDetail last3m = new CreditLimits.TimeWindowDetail();
+        last3m.setCreditCard(createLimitStats(20000, 100000, 60000));
+        last3m.setRevolving(createLimitStats(50000, 300000, 175000));
+        last3m.setConsumerFinance(createLimitStats(30000, 50000, 40000));
+        timeWindowStats.setLast3m(last3m);
+        
+        // 近6个月
+        CreditLimits.TimeWindowDetail last6m = new CreditLimits.TimeWindowDetail();
+        last6m.setCreditCard(createLimitStats(20000, 100000, 65000));
+        last6m.setRevolving(createLimitStats(50000, 300000, 180000));
+        timeWindowStats.setLast6m(last6m);
+        
+        // 近12个月
+        CreditLimits.TimeWindowDetail last12m = new CreditLimits.TimeWindowDetail();
+        last12m.setCreditCard(createLimitStats(20000, 100000, 70000));
+        last12m.setRevolving(createLimitStats(50000, 300000, 190000));
+        timeWindowStats.setLast12m(last12m);
+        
+        creditLimits.setTimeWindowStats(timeWindowStats);
+        
+        return creditLimits;
+    }
+
+    /**
+     * 创建额度统计
+     */
+    private CreditLimits.LimitStats createLimitStats(long min, long max, long avg) {
+        CreditLimits.LimitStats stats = new CreditLimits.LimitStats();
+        stats.setMin(min);
+        stats.setMax(max);
+        stats.setAvg(avg);
+        return stats;
     }
 }

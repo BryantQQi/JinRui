@@ -3,6 +3,8 @@ package com.JinRui.fengkong4.entity;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 个人基本信息
  * 
@@ -124,4 +126,22 @@ public class PersonalInfo {
      */
     @JacksonXmlProperty(localName = "AnnualIncome")
     private String annualIncome;
+
+    /**
+     * 联系信息模块
+     */
+    @JacksonXmlProperty(localName = "ContactInfo")
+    private ContactInfo contactInfo;
+
+    /**
+     * 配偶信息（仅当marital_status=20时返回有效数据）
+     */
+    @JacksonXmlProperty(localName = "SpouseInfo")
+    private SpouseInfo spouseInfo;
+
+    /**
+     * 其他证件列表（非身份证证件补充）
+     */
+    @JacksonXmlProperty(localName = "OtherCertificates")
+    private List<OtherCertificate> otherCertificates;
 }
