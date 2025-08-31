@@ -77,6 +77,26 @@ public class CreditReportMongo {
     private Integer firstCreditMonthDiff;
 
     /**
+     * 征信评分
+     */
+    private Integer creditScore;
+
+    /**
+     * 评分时间
+     */
+    private Date scoreTime;
+
+    /**
+     * 评分状态（PENDING-待评分，PROCESSING-评分中，COMPLETED-已完成，FAILED-失败）
+     */
+    private String scoreStatus;
+
+    /**
+     * 大模型响应时间（毫秒）
+     */
+    private Long aiResponseTime;
+
+    /**
      * 创建时间
      */
     private Date createTime;

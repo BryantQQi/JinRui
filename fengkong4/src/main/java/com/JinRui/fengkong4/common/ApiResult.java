@@ -28,6 +28,15 @@ public class ApiResult<T> implements Serializable {
         return r;
     }
 
+    public static <T> ApiResult<T> fail(int code, String msg, T data) {
+        ApiResult<T> r = new ApiResult<>();
+        r.setCode(code);
+        r.setMsg(msg);
+        r.setData(data);
+        r.setTraceId(currentTraceId());
+        return r;
+    }
+
     private static String currentTraceId() {
         // 可从 MDC/Sleuth 获取链路ID，这里先返回空串占位
         return "";

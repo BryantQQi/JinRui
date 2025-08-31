@@ -340,4 +340,50 @@ public class CreditDataStorageServiceImpl implements CreditDataStorageService {
         }
         return idCard.substring(0, 3) + "****" + idCard.substring(idCard.length() - 4);
     }
+
+    @Override
+    @Transactional
+    public String saveCreditScoreResult(String idCard, String name, Integer score, CreditReport creditReport, Long aiResponseTime) throws ParseException {
+        try {
+            log.info("开始保存征信评分结果：身份证={}，姓名={}，评分={}", maskIdCard(idCard), name, score);
+            
+            // 1. 检查是否已存在征信数据
+            List<CreditReportMongo> existingReports = creditReportRepository.findByIdNumberAndName(idCard, name);
+            
+            if (existingReports.isEmpty()) {
+                // 如果不存在，先创建征信数据
+                log.info("征信数据不存在，先创建征信数据");
+                String saveResult = saveCreditDataByIdAndName(idCard, name);
+                log.info("征信数据创建结果：{}", saveResult);
+                
+                // 重新查询
+                existingReports = creditReportRepository.findByIdNumberAndName(idCard, name);
+            }
+            
+            if (existingReports.isEmpty()) {
+                throw new RuntimeException("创建征信数据失败");
+            }
+            
+            // 2. 更新评分信息
+            CreditReportMongo creditReportMongo = existingReports.get(0);
+            creditReportMongo.setCreditScore(score);
+            creditReportMongo.setScoreTime(new Date());
+            creditReportMongo.setScoreStatus("COMPLETED");
+            creditReportMongo.setAiResponseTime(aiResponseTime);
+            creditReportMongo.setUpdateTime(new Date());
+            
+            // 3. 保存更新后的征信记录
+            creditReportRepository.save(creditReportMongo);
+            
+            log.info("征信评分结果保存成功：身份证={}，姓名={}，评分={}，响应时间={}ms", 
+                    maskIdCard(idCard), name, score, aiResponseTime);
+            
+            return String.format("征信评分结果保存成功，评分：%d分，AI响应时间：%dms", score, aiResponseTime);
+            
+        } catch (Exception e) {
+            log.error("保存征信评分结果失败：身份证={}，姓名={}，评分={}，错误={}", 
+                     maskIdCard(idCard), name, score, e.getMessage(), e);
+            throw new ParseException("保存征信评分结果失败：" + e.getMessage());
+        }
+    }
 }

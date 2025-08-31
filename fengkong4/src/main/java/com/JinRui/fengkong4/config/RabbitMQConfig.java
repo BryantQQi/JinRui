@@ -32,6 +32,21 @@ public class RabbitMQConfig {
     public static final String DEMO_ROUTING_KEY = "demo.routing.key";
 
     /**
+     * 征信评分队列名称
+     */
+    public static final String CREDIT_SCORE_QUEUE = "credit.score.queue";
+    
+    /**
+     * 征信评分交换机名称
+     */
+    public static final String CREDIT_SCORE_EXCHANGE = "credit.score.exchange";
+    
+    /**
+     * 征信评分路由键
+     */
+    public static final String CREDIT_SCORE_ROUTING_KEY = "credit.score.routing.key";
+
+    /**
      * 创建演示队列
      */
     @Bean
@@ -55,6 +70,32 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(demoQueue())
                 .to(demoExchange())
                 .with(DEMO_ROUTING_KEY);
+    }
+
+    /**
+     * 创建征信评分队列
+     */
+    @Bean
+    public Queue creditScoreQueue() {
+        return QueueBuilder.durable(CREDIT_SCORE_QUEUE).build();
+    }
+
+    /**
+     * 创建征信评分交换机
+     */
+    @Bean
+    public TopicExchange creditScoreExchange() {
+        return new TopicExchange(CREDIT_SCORE_EXCHANGE);
+    }
+
+    /**
+     * 绑定征信评分队列到交换机
+     */
+    @Bean
+    public Binding creditScoreBinding() {
+        return BindingBuilder.bind(creditScoreQueue())
+                .to(creditScoreExchange())
+                .with(CREDIT_SCORE_ROUTING_KEY);
     }
 
     /**
