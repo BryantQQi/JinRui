@@ -15,6 +15,20 @@ spring:
       host: localhost
       port: 27017
       database: fengkong4_test
+  # RabbitMQ配置
+  rabbitmq:
+    host: 121.4.64.60
+    port: 5672
+    username: ssyx
+    password: wmq123456
+    virtual-host: /ssyx
+    publisher-confirm-type: CORRELATED
+    publisher-returns: true
+    listener:
+      simple:
+        prefetch: 1
+        concurrency: 3
+        acknowledge-mode: manual
 
 # 二代征信报文配置
 credit-report:
