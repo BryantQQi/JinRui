@@ -7,8 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.List;
 
 /**
@@ -45,6 +43,28 @@ public class XmlReportParser implements ReportParser {
             
         } catch (Exception e) {
             log.error("解析XML格式征信报文失败", e);
+            throw new ParseException("XML解析失败：" + e.getMessage(), e, "XML_PARSE_ERROR", format);
+        }
+    }
+    
+    @Override
+    public CreditReport parseToCreditReport(String reportData, String format) throws ParseException {
+        log.info("开始解析XML格式征信报文为CreditReport对象，数据长度：{}", reportData.length());
+        
+        try {
+            // 验证格式
+            if (!isValidFormat(reportData)) {
+                throw new ParseException("无效的XML格式", "INVALID_XML_FORMAT", format);
+            }
+            
+            // 解析XML为CreditReport对象
+            CreditReport creditReport = xmlMapper.readValue(reportData, CreditReport.class);
+            
+            log.info("XML格式征信报文解析为CreditReport对象完成");
+            return creditReport;
+            
+        } catch (Exception e) {
+            log.error("解析XML格式征信报文为CreditReport对象失败", e);
             throw new ParseException("XML解析失败：" + e.getMessage(), e, "XML_PARSE_ERROR", format);
         }
     }

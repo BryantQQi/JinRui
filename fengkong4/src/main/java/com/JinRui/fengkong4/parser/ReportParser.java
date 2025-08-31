@@ -1,5 +1,6 @@
 package com.JinRui.fengkong4.parser;
 
+import com.JinRui.fengkong4.entity.CreditReport;
 import com.JinRui.fengkong4.entity.TreeNode;
 
 /**
@@ -18,6 +19,16 @@ public interface ReportParser {
      * @throws ParseException 解析异常
      */
     TreeNode parse(String reportData, String format) throws ParseException;
+    
+    /**
+     * 解析报文数据为CreditReport对象
+     * 
+     * @param reportData 报文数据（XML或JSON字符串）
+     * @param format 数据格式（XML或JSON）
+     * @return CreditReport 解析后的征信报文对象
+     * @throws ParseException 解析异常
+     */
+    CreditReport parseToCreditReport(String reportData, String format) throws ParseException;
     
     /**
      * 获取支持的格式

@@ -48,6 +48,28 @@ public class JsonReportParser implements ReportParser {
     }
     
     @Override
+    public CreditReport parseToCreditReport(String reportData, String format) throws ParseException {
+        log.info("开始解析JSON格式征信报文为CreditReport对象，数据长度：{}", reportData.length());
+        
+        try {
+            // 验证格式
+            if (!isValidFormat(reportData)) {
+                throw new ParseException("无效的JSON格式", "INVALID_JSON_FORMAT", format);
+            }
+            
+            // 解析JSON为CreditReport对象
+            CreditReport creditReport = objectMapper.readValue(reportData, CreditReport.class);
+            
+            log.info("JSON格式征信报文解析为CreditReport对象完成");
+            return creditReport;
+            
+        } catch (Exception e) {
+            log.error("解析JSON格式征信报文为CreditReport对象失败", e);
+            throw new ParseException("JSON解析失败：" + e.getMessage(), e, "JSON_PARSE_ERROR", format);
+        }
+    }
+    
+    @Override
     public String getSupportedFormat() {
         return "JSON";
     }
