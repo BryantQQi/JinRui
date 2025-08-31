@@ -1,0 +1,54 @@
+server:
+  port: 8312
+
+spring:
+  application:
+    name: fengkong4-credit-report
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    # XML配置
+    default-property-inclusion: non_null
+  # MongoDB配置
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: fengkong4_test
+  # RabbitMQ配置
+  rabbitmq:
+    host: 121.4.64.60
+    port: 5672
+    username: ssyx
+    password: wmq123456
+    virtual-host: /ssyx
+    publisher-confirm-type: CORRELATED
+    publisher-returns: true
+    listener:
+      simple:
+        prefetch: 1
+        concurrency: 3
+        acknowledge-mode: manual
+
+# 二代征信报文配置
+credit-report:
+  # 报文版本
+  version: "2.0"
+  # 机构代码
+  institution-code: "FENGKONG001"
+  # 数据生成配置
+  data-generation:
+    # 是否启用随机数据生成
+    enable-random: true
+    # 默认生成的信贷记录数量
+    default-credit-records: 5
+    # 默认生成的查询记录数量
+    default-query-records: 3
+
+# 日志配置
+logging:
+  level:
+    com.JinRui.fengkong4: DEBUG
+    org.springframework.web: INFO
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"

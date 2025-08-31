@@ -28,6 +28,7 @@ public class CreditReportParseServiceImpl implements CreditReportParseService {
     public CreditReport getCreditReportByIdAndName(String idCard, String name) throws ParseException {
         log.info("开始获取并解析征信报文，身份证：{}，姓名：{}", maskIdCard(idCard), name);
 
+
         try {
             // 参数验证
             if (!treeNodeService.validateIdCard(idCard)) {

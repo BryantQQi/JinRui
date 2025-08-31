@@ -45,11 +45,6 @@ public class CreditScoreBatchController {
         try {
             log.info("接收到批量征信评分请求，数量：{}，批次ID：{}", count, batchId);
             
-            // 参数验证
-            if (count <= 0 || count > 1000) {
-                return ApiResult.fail(400, "请求数量必须在1-1000之间");
-            }
-            
             // 1. 生成用户信息
             log.info("开始生成用户信息，数量：{}", count);
             List<CreditScoreRequest> requests = userInfoGeneratorService.generateUserInfoBatch(count, batchId);

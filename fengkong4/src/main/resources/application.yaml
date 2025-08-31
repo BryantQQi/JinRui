@@ -15,6 +15,19 @@ spring:
       host: localhost
       port: 27017
       database: fengkong4_test
+  # MySQL数据源配置
+  datasource:
+    mysql:
+      jdbc-url: jdbc:mysql://localhost:3306/fengkong4_mysql?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      username: root
+      password: wmq123456
+      hikari:
+        maximum-pool-size: 20
+        minimum-idle: 5
+        connection-timeout: 30000
+        idle-timeout: 600000
+        max-lifetime: 1800000
   # RabbitMQ配置
   rabbitmq:
     host: 121.4.64.60
@@ -44,6 +57,60 @@ credit-report:
     default-credit-records: 5
     # 默认生成的查询记录数量
     default-query-records: 3
+
+# Excel导出配置
+excel:
+  export:
+    # 分批处理的批次大小
+    batch-size: 1000
+    # 内存使用警告阈值（百分比）
+    max-memory-usage-percent: 80
+    # 是否启用进度日志记录
+    enable-progress-logging: true
+    # 进度报告间隔（批次数）
+    progress-report-interval: 10
+    # 是否在每批处理后强制垃圾回收
+    enable-force-gc: true
+    # 是否启用自适应批次大小调整
+    enable-adaptive-batch-size: true
+    # 自适应批次大小的最小值
+    min-batch-size: 1000
+    # 自适应批次大小的最大值
+    max-batch-size: 10000
+    # 导出超时时间（分钟）
+    export-timeout-minutes: 30
+    # 是否启用详细的内存监控日志
+    enable-detailed-memory-logging: false
+
+# MyBatis-Plus配置
+mybatis-plus:
+  # 实体类扫描路径
+  type-aliases-package: com.JinRui.fengkong4.entity.mysql
+  # Mapper XML文件路径
+  mapper-locations: classpath:mapper/*.xml
+  # 全局配置
+  global-config:
+    db-config:
+      # 主键类型
+      id-type: ASSIGN_ID
+      # 逻辑删除字段
+      logic-delete-field: deleted
+      # 逻辑删除值
+      logic-delete-value: 1
+      # 逻辑未删除值
+      logic-not-delete-value: 0
+      # 字段策略
+      field-strategy: NOT_EMPTY
+  # 配置
+  configuration:
+    # 是否开启自动驼峰命名规则映射
+    map-underscore-to-camel-case: true
+    # 开启Mybatis二级缓存
+    cache-enabled: false
+    # 配置JdbcTypeForNull
+    jdbc-type-for-null: NULL
+    # 打印SQL语句
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 # 日志配置
 logging:

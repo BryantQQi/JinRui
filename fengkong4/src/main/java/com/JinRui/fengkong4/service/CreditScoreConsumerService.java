@@ -42,7 +42,7 @@ public class CreditScoreConsumerService {
      * @param message 消息对象
      * @param channel 通道对象
      */
-    @RabbitListener(queues = RabbitMQConfig.CREDIT_SCORE_QUEUE)
+//    @RabbitListener(queues = RabbitMQConfig.CREDIT_SCORE_QUEUE)
     public void processCreditScoreRequest(String messageBody, Message message, Channel channel) {
         long startTime = System.currentTimeMillis();
         CreditScoreRequest request = null;
