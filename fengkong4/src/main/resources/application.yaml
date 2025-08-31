@@ -9,6 +9,12 @@ spring:
     time-zone: GMT+8
     # XML配置
     default-property-inclusion: non_null
+  # MongoDB配置
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: fengkong4_test
 
 # 二代征信报文配置
 credit-report:
